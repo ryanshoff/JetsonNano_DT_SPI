@@ -14,6 +14,16 @@
 	model = "jetson-nano";
 	nvidia,dtsfilename = "/dvs/git/dirty/git-master_linux/kernel/kernel-4.9/arch/arm64/boot/dts/../../../../../../hardware/nvidia/platform/t210/porg/kernel-dts/tegra210-p3448-0000-p3449-0000-a02.dts";
 
+	clocks {
+		/* 16MHz external crystal oscillator */
+		clk16m: mcp251x_osc {
+		    #clock-cells = <0>;
+		    compatible = "fixed-clock";
+		    clock-frequency = <16000000>;
+		};
+	};
+
+
 	thermal-zones {
 
 		AO-therm {
@@ -2380,7 +2390,7 @@
 			spi2_miso_pb5 {
 				nvidia,pins = "spi2_miso_pb5";
 				nvidia,function = "rsvd2";
-				nvidia,pull = <0x1>;
+				nvidia,pull = <0x2>;
 				nvidia,tristate = <0x0>;
 				nvidia,enable-input = <0x1>;
 			};
@@ -3155,8 +3165,8 @@
 		default {
 			gpio-hog;
 			function;
-			gpios = <0x10 0 0x11 0 0x12 0 0x13 0 0x14 0>;
-			gpio-input = <0xd8 0xc 0xd 0xe 0xf 0xe8 0x26 0x95 0x5 0xbc 0xbd 0xbe 0xc1 0xc2 0xa8 0xa9 0xc8 0xca 0x4d 0x4e 0x4c 0x4f 0x32 0x33 0x3a 0x3d 0x3e 0x41 0xe4>;
+			gpios = <0x0d 0 0x10 0 0x11 0 0x12 0 0x13 0 0x14 0>;
+			gpio-input = <0xd8 0xc 0xe 0xf 0xe8 0x26 0x95 0x5 0xbc 0xbd 0xbe 0xc1 0xc2 0xa8 0xa9 0xc8 0xca 0x4d 0x4e 0x4c 0x4f 0x32 0x33 0x3a 0x3d 0x3e 0x41 0xe4>;
 			gpio-output-low = <0x97 0x98 0xcb 0x38 0x3b 0x3c 0x3f 0x40 0x42>;
 			gpio-output-high = <0x6 0xbb>;
 			linux,phandle = <0x43>;
@@ -3729,6 +3739,31 @@
 				prod = <0x4 0xfff 0x44b>;
 			};
 		};
+
+		spi0_0 {
+				#address-cells = <0x1>;
+				#size-cells = <0x0>;
+				compatible = "spidev";
+				reg = <0x1>;
+				spi-max-frequency = <0x1312d00>;
+				nvidia,enable-hw-based-cs;
+				nvidia,cs-setup-clk-count = <0x1e>;
+				nvidia,cs-hold-clk-count = <0x1e>;
+				nvidia,rx-clk-tap-delay = <0x1f>;
+				nvidia,tx-clk-tap-delay = <0x0>;
+		};
+
+		can@0 {
+		    #address-cells = <0x1>;
+		    #size-cells = <0x0>;
+		    compatible = "microchip,mcp2515";
+		    reg = <0x0>;
+
+		    clocks = <&clk16m>;
+		    interrupt-parent = <0x5d>;
+		    interrupts = <0xd 0x2>;
+		    spi-max-frequency = <2000000>;
+		};
 	};
 
 	spi@7000d600 {
@@ -3745,7 +3780,7 @@
 		clock-names = "spi", "pll_p", "clk_m";
 		resets = <0x27 0x2c>;
 		reset-names = "spi";
-		status = "okay";
+		status = "disabled";
 		linux,phandle = <0xf0>;
 		phandle = <0xf0>;
 
@@ -3765,19 +3800,6 @@
 				status = "disabled";
 				prod = <0x4 0xfff 0x44b>;
 			};
-		};
-
-		spi0_0 {
-				#address-cells = <0x1>;
-				#size-cells = <0x0>;
-				compatible = "spidev";
-				reg = <0x0>;
-				spi-max-frequency = <0x1312d00>;
-				nvidia,enable-hw-based-cs;
-				nvidia,cs-setup-clk-count = <0x1e>;
-				nvidia,cs-hold-clk-count = <0x1e>;
-				nvidia,rx-clk-tap-delay = <0x1f>;
-				nvidia,tx-clk-tap-delay = <0x0>;
 		};
 	};
 

@@ -1,6 +1,22 @@
-# JetsonNano_DT_SPI
+# JetsonNano_DT_SPI + CANBUS (mcp2515)
 
-unofficial script for Jetson Nano(L4T Jetson-Nano-Tegra210_Linux_R32.1.0_aarch64) to enable SPI1
+fork to add support for this pican2 board:
+http://skpang.co.uk/catalog/pican2-canbus-board-for-raspberry-pi-23-p-1475.html
+
+After boot, you still have to configure can interface:
+```sudo modprobe can
+sudo ip link set can0 up type can bitrate 1000000
+```
+
+The interuppt pin is wired to spi1, so that is disabled.
+/dev/spidev0.1 is enabled also.
+
+
+
+
+
+
+unofficial script for Jetson Nano(L4T Jetson-Nano-Tegra210_Linux_R32.1.0_aarch64) to enable SPI0 and CAN
 
 First, download this repository into your Ubuntu PC (not your Jetson Nano).  
 After downloading, just run:
